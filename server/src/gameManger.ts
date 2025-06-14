@@ -1,47 +1,71 @@
-import { WebSocket} from "ws";
-import { INIT_GAME, MOVE } from "./messages";
 import { Game } from "./games";
-
-
+import { INIT_GAME, MOVE } from "./messages";
+import { WebSocket } from "ws";
 
 export class GameManager {
     private games: Game[];
     private pendingUser: WebSocket | null;
-    private users: WebSocket[]
+    private users: WebSocket[];
     constructor() {
-        this.games = []
-        this.pendingUser=null
-        this.users=[]
+        this.games = [];
+        this.pendingUser = null;
+        this.users = [];
     }
     addUser(socket: WebSocket) {
-        this.users.push(socket)
-        this.addHandler(socket)
-
+        this.users.push(socket);
+        this.addHandler(socket);
     }
     removeUser(socket: WebSocket) {
-        this.users = this.users.filter(user => user !== socket)
-
+        this.users = this.users.filter(user => user !== socket);
+        this.games = this.games.filter(game => {
+            if (game.player1 === socket || game.player2 === socket) {
+                try {
+                    game.player1.close();
+                } catch {}
+                try {
+                    game.player2.close();
+                } catch {}
+                return false;
+            }
+            return true;
+        });
+        if (this.pendingUser === socket) {
+            this.pendingUser = null;
+        }
     }
     private addHandler(socket: WebSocket) {
         socket.on("message", (data) => {
-            const message = JSON.parse(data.toString())
-          
-            if(message.type===INIT_GAME){
-                if(this.pendingUser){
-                    const game= new Game (this.pendingUser,socket)
-                    this.games.push(game)
-                    this.pendingUser=null;
-                    
-                }else{
-                    this.pendingUser=socket
-                }
+            let message;
+            try {
+                message = JSON.parse(data.toString());
+            } catch (e) {
+                socket.send(JSON.stringify({ error: "Invalid JSON" }));
+                return;
             }
-            if(message.type===MOVE){
-                const game=this.games.find(game=>game.player1===socket || game.player2===socket);
-                if(game){
-                    game.makeMove(socket,message.payload.move)
+            if (message.type === INIT_GAME) {
+                if (this.pendingUser && this.pendingUser !== socket) {
+                    const game = new Game(this.pendingUser, socket);
+                    this.games.push(game);
+                    this.pendingUser = null;
+                } else {
+                    this.pendingUser = socket;
                 }
+            } else if (message.type === MOVE) {
+                const game = this.games.find(game => game.player1 === socket || game.player2 === socket);
+                if (game) {
+                    game.makeMove(socket, message.payload);
+                } else {
+                    socket.send(JSON.stringify({ error: "Game not found" }));
+                }
+            } else {
+                socket.send(JSON.stringify({ error: "Unknown message type" }));
             }
-        })
+        });
+        socket.on("close", () => {
+            this.removeUser(socket);
+        });
+        socket.on("error", () => {
+            this.removeUser(socket);
+        });
     }
 }
