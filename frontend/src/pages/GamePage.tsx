@@ -3,16 +3,17 @@ import { useSocket } from "@/hooks/useSocket";
 import { INIT_GAME } from "@/types/socket";
 import React, { useEffect, useState, useCallback } from "react";
 
-type GameStatus = "waiting" | "started";
+type GameStatus = "not-started" | "waiting-opponent" | "started";
 
 const GamePage: React.FC = () => {
   const { socket, send, isConnected } = useSocket('ws://localhost:8080');
-  const [gameStatus, setGameStatus] = useState<GameStatus>("waiting");
+  const [gameStatus, setGameStatus] = useState<GameStatus>("not-started");
   const [playerColor, setPlayerColor] = useState<string | null>(null);
 
   const handleSocketMessage = useCallback((event: MessageEvent) => {
     try {
       const data = JSON.parse(event.data);
+      console.log(data);
       if (data.type === INIT_GAME) {
         setGameStatus("started");
         setPlayerColor(data.payload?.color ?? null);
@@ -30,18 +31,31 @@ const GamePage: React.FC = () => {
     };
   }, [socket, handleSocketMessage]);
 
+  useEffect(() => {
+    if (!isConnected) {
+      setGameStatus("not-started");
+      setPlayerColor(null);
+    }
+  }, [isConnected]);
+
   const handleStartGame = () => {
     if (socket && isConnected) {
       send(JSON.stringify({ type: INIT_GAME }));
+      setGameStatus("waiting-opponent");
     }
   };
 
   return (
     <div>
-      <h1>Game Page</h1>
-      {gameStatus === "waiting" && (
+      <h1>Game Page  {isConnected ? <div className="text-green-500">Connected</div> : <div className="text-red-500">Not Connected</div> }  </h1>
+      {gameStatus === "not-started" && (
         <div>
-          <h2>Waiting for user...</h2>
+          <h2>Please start your game</h2>
+        </div>
+      )}
+      {gameStatus === "waiting-opponent" && (
+        <div>
+          <h2>Waiting for opponent to join...</h2>
         </div>
       )}
       {gameStatus === "started" && playerColor && (
@@ -50,7 +64,7 @@ const GamePage: React.FC = () => {
           <h3>Your color: {playerColor}</h3>
         </div>
       )}
-      <Button onClick={handleStartGame} disabled={!isConnected}>
+      <Button onClick={handleStartGame} disabled={!isConnected || gameStatus !== "not-started"}>
         Start Game
       </Button>
     </div>
