@@ -4,6 +4,8 @@ import { Canvas } from "@react-three/fiber";
 const TestPage: React.FC = () => {
   return (
     <Canvas
+    camera={{ position: [10, 10, 10], fov: 50 }}
+
       style={{
         position: "fixed",
         top: 0,

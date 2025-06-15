@@ -5,9 +5,12 @@ import Lights from './lights'
 
 const Experience = () => {
     return <>
-        <OrbitControls makeDefault />
+        <OrbitControls makeDefault
+        minDistance={10}
+        
+        />
         <Lights />
-        <mesh receiveShadow position={[0, -0.16, 0]} >
+        <mesh receiveShadow position={[0, -0.16, 0]}  >
             <boxGeometry args={[8.8, 0.3, 8.8]} />
             <meshStandardMaterial color="#333" />
         </mesh>
