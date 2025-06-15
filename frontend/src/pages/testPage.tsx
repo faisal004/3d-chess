@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 const TestPage: React.FC = () => {
   return (
     <Canvas
+    className="bg-linear-to-b from-black to-blue-900"
     camera={{ position: [10, 10, 10], fov: 50 }}
 
       style={{
@@ -12,7 +13,6 @@ const TestPage: React.FC = () => {
         left: 0,
         width: "100%",
         height: "100%",
-        background: "ivory",
       }}
     >
       <Experience />
