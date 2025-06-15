@@ -1,5 +1,5 @@
 import { Game } from "./games";
-import { INIT_GAME, MOVE } from "./messages";
+import { INIT_GAME, MOVE, OPPONENT_LEFT } from "./messages";
 import { WebSocket } from "ws";
 
 export class GameManager {
@@ -19,12 +19,17 @@ export class GameManager {
         this.users = this.users.filter(user => user !== socket);
         this.games = this.games.filter(game => {
             if (game.player1 === socket || game.player2 === socket) {
+                const remainingPlayer = game.player1 === socket ? game.player2 : game.player1;
                 try {
-                    game.player1.close();
-                } catch {}
+                    remainingPlayer.send(JSON.stringify({ type: OPPONENT_LEFT }));
+                } catch { 
+                    console.log("Failed to send message to remaining player");
+                }
                 try {
-                    game.player2.close();
-                } catch {}
+                    socket.close();
+                } catch { 
+                    console.log("Failed to close socket");
+                }
                 return false;
             }
             return true;
