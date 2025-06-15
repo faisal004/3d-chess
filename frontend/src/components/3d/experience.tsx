@@ -25,7 +25,7 @@ const Experience = () => {
                         receiveShadow
                         castShadow
                     >
-                        <boxGeometry args={[1, 0.1, 1]} />
+                        <boxGeometry args={[1, 0.2, 1]} />
                         <meshStandardMaterial color={isWhite ? '#ffffff' : '#000000'} />
                     </mesh>
                 );
