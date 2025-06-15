@@ -1,7 +1,8 @@
-import Experience from "@/components/3d/experience";
+import ChessBoard from "@/components/3d/chessBoard";
 import { Canvas } from "@react-three/fiber";
 
 const TestPage: React.FC = () => {
+  
   return (
     <Canvas
     shadows
@@ -16,7 +17,7 @@ const TestPage: React.FC = () => {
         height: "100%",
       }}
     >
-      <Experience />
+      {/* <ChessBoard /> */}
     </Canvas>
   );
 };
