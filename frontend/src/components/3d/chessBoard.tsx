@@ -3,6 +3,7 @@ import { OrbitControls } from '@react-three/drei';
 import Lights from './lights';
 import type { Square, Piece } from 'chess.js';
 import React, { useState, useMemo, useCallback } from 'react';
+import type { GameStatus } from '@/types/type';
 
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
@@ -10,13 +11,14 @@ type ChessBoardProps = {
     board: (Piece | null)[][];
     onMove: (move: { from: Square; to: Square }) => void;
     getLegalMoves: (square: Square) => Square[];
+    gameStatus: GameStatus;
 };
 
 const getSquare = (row: number, col: number): Square => {
     return (FILES[col] + (8 - row)) as Square;
 };
 
-const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves }) => {
+const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, gameStatus }) => {
     const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
 
     const validMoves = useMemo(() => {
@@ -34,6 +36,12 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves })
     }, [validMoves]);
 
     const handleSquareClick = useCallback((row: number, col: number) => {
+
+        if (gameStatus == "started" || gameStatus == "waiting-opponent") {
+            alert("Game has not started yet.");
+            return;
+        }
+
         const clickedSquare = getSquare(row, col);
         const piece = board[row][col];
 

@@ -112,7 +112,7 @@ const GamePage: React.FC = () => {
           height: "100%",
         }}
       >
-        <ChessBoard board={board} onMove={handleLocalMove} getLegalMoves={getLegalMoves} />
+        <ChessBoard board={board} onMove={handleLocalMove} getLegalMoves={getLegalMoves} gameStatus={gameStatus} />
       </Canvas>
     </>
   );
