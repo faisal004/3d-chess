@@ -67,6 +67,8 @@ const GamePage: React.FC = () => {
 
   const handleStartGame = () => {
     if (socket && isConnected) {
+      gameRef.current.reset();
+      setLastFen(gameRef.current.fen());
       send(JSON.stringify({ type: INIT_GAME }));
       setMessage(null);
       setGameStatus("waiting-opponent");
