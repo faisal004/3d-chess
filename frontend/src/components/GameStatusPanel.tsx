@@ -36,9 +36,15 @@ const GameStatusPanel: React.FC<GameStatusPanelProps> = ({
           aria-label={open ? 'Collapse status panel' : 'Expand status panel'}
           style={{ background: 'transparent', border: 'none' }}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-3">
             <div className="text-white/80 text-sm font-medium pr-4">
-              {turn === playerColor?.[0] ? "Your Turn" : "Opponent's Turn"}
+              {gameStatus === "started" ? (
+                <span>
+                  {turn === playerColor?.[0] ? "Your Turn" : "Opponent's Turn"}
+                </span>
+              ) : (
+                gameStatus === "waiting-opponent" ? "Waiting for opponent" : "Start the game"
+              )}
             </div>
             <div className="relative">
               {isConnected ? (
