@@ -66,7 +66,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves })
                 if (highlight) {
                     squareColor = '#f7e26b';
                 } else if (canMoveTo) {
-                    squareColor = piece ? '#ff6b6b' : '#90EE90';
+                    squareColor = piece ? '#ff6b6b' : '#f7e26b';
                 }
 
                 return (
