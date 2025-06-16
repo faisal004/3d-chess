@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback, useRef, useMemo } from "react"
 import ChessBoard from "@/components/3d/chessBoard";
 import { Canvas } from "@react-three/fiber";
 import GameStatusPanel from "@/components/GameStatusPanel";
-import { Chess } from "chess.js";
+import { Chess, type Square } from "chess.js";
 import type { GameStatus, MovePayload, SocketMessage } from "@/types/type";
 
 
@@ -82,6 +82,10 @@ const GamePage: React.FC = () => {
       }
     }
   };
+  const getLegalMoves = (square: Square): Square[] => {
+    const moves = gameRef.current.moves({ square, verbose: true });
+    return moves.map(move => move.to);
+  };
 
   return (
     <>
@@ -106,7 +110,7 @@ const GamePage: React.FC = () => {
           height: "100%",
         }}
       >
-        <ChessBoard board={board} onMove={handleLocalMove} />
+        <ChessBoard board={board} onMove={handleLocalMove} getLegalMoves={getLegalMoves} />
       </Canvas>
     </>
   );
