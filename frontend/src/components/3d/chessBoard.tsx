@@ -12,13 +12,14 @@ type ChessBoardProps = {
     onMove: (move: { from: Square; to: Square }) => void;
     getLegalMoves: (square: Square) => Square[];
     gameStatus: GameStatus;
+    playerColor: string | null;
 };
 
 const getSquare = (row: number, col: number): Square => {
     return (FILES[col] + (8 - row)) as Square;
 };
 
-const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, gameStatus }) => {
+const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, gameStatus, playerColor }) => {
     const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
 
     const validMoves = useMemo(() => {
@@ -41,11 +42,14 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
             alert("Game has not started yet.");
             return;
         }
-
+       
         const clickedSquare = getSquare(row, col);
         const piece = board[row][col];
-
         if (!selectedSquare) {
+            if (piece && piece.color !== playerColor?.[0] && gameStatus === "started") {
+                alert("You cannot select your opponent’s pieces.");
+                return;
+            }
             if (piece) {
                 setSelectedSquare(clickedSquare);
             }
