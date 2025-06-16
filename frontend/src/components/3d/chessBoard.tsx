@@ -37,7 +37,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
 
     const handleSquareClick = useCallback((row: number, col: number) => {
 
-        if (gameStatus == "not-started" || gameStatus == "waiting-opponent") {
+        if ( gameStatus == "waiting-opponent") {
             alert("Game has not started yet.");
             return;
         }
