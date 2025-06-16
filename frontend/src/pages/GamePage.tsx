@@ -88,6 +88,7 @@ const GamePage: React.FC = () => {
     const moves = gameRef.current.moves({ square, verbose: true });
     return moves.map(move => move.to);
   };
+  const turn = gameRef.current.turn(); // 'w' or 'b'
 
   return (
     <>
@@ -98,6 +99,7 @@ const GamePage: React.FC = () => {
           gameStatus={gameStatus}
           playerColor={playerColor}
           handleStartGame={handleStartGame}
+          turn={turn}
         />
       </div>
       <Canvas

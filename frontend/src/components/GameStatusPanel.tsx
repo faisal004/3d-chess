@@ -8,6 +8,7 @@ type GameStatusPanelProps = {
   gameStatus: GameStatus;
   playerColor: string | null;
   handleStartGame: () => void;
+  turn: string;
 };
 
 const GameStatusPanel: React.FC<GameStatusPanelProps> = ({
@@ -16,12 +17,15 @@ const GameStatusPanel: React.FC<GameStatusPanelProps> = ({
   gameStatus,
   playerColor,
   handleStartGame,
+  turn
 }) => {
   return (
     <div className="absolute top-8 right-8 z-10">
       <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-2xl p-8 w-80 transform transition-all duration-500 ">
         <div className="flex items-center justify-center mb-8">
-         
+          <div className="text-white/80 text-sm font-medium pr-4">
+            {turn === playerColor?.[0] ? "Your Turn" : "Opponent's Turn"}
+          </div>
           <div className="flex items-center gap-3">
             <div className="relative">
               {isConnected ? (
