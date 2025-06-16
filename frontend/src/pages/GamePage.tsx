@@ -92,7 +92,7 @@ const GamePage: React.FC = () => {
 
   return (
     <>
-      <div className="relative w-full min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 overflow-hidden">
+
         <GameStatusPanel
           isConnected={isConnected}
           message={message}
@@ -101,7 +101,7 @@ const GamePage: React.FC = () => {
           handleStartGame={handleStartGame}
           turn={turn}
         />
-      </div>
+      
       <Canvas
         shadows
         className="bg-linear-to-b from-black to-zinc-700"
