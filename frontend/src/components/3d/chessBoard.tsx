@@ -37,7 +37,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
 
     const handleSquareClick = useCallback((row: number, col: number) => {
 
-        if (gameStatus == "started" || gameStatus == "waiting-opponent") {
+        if (gameStatus == "not-started" || gameStatus == "waiting-opponent") {
             alert("Game has not started yet.");
             return;
         }
@@ -60,7 +60,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
         const move = { from: selectedSquare, to: clickedSquare };
         onMove(move);
         setSelectedSquare(null);
-    }, [selectedSquare, board, onMove]);
+    }, [selectedSquare, board, onMove, gameStatus]);
 
     const boardElements = useMemo(() => {
         return board.map((rowArr, row) =>
