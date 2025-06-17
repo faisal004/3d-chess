@@ -99,5 +99,5 @@ export const PawnModel = ({ position, color }: { position: [number, number, numb
       }
     });
   }, [cloned, color]);
-  return <primitive object={cloned} scale={0.15} position={position} />;
+  return <primitive object={cloned} scale={0.12} position={position} />;
 };

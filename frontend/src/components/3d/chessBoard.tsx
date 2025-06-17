@@ -95,7 +95,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
 
                                     <group position={[col - 3.5, 0.25, row - 3.5]} castShadow>
                                         {piece.type === 'p' &&
-                                                <PawnModel position={[0, 0, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                                <PawnModel position={[0, 0.03, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
                                         }
                                         {piece.type === 'r' &&
                                                 <RookModel position={[0, 0.19, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
