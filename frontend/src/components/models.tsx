@@ -11,6 +11,8 @@ export const KingModel = ({ position, color }: { position: [number, number, numb
       if (child.isMesh && child.material) {
         child.material = child.material.clone(); 
         child.material.color = new THREE.Color(color);
+        child.castShadow = true;
+        child.receiveShadow = true;
       }
     });
   }, [cloned, color]);
