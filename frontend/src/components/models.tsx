@@ -27,6 +27,8 @@ export const QueenModel = ({ position, color }: { position: [number, number, num
       if (child.isMesh && child.material) {
         child.material = child.material.clone(); // avoid sharing material
         child.material.color = new THREE.Color(color);
+        child.castShadow = true;
+        child.receiveShadow = true;
       }
     });
   }, [cloned, color]);
@@ -42,6 +44,8 @@ export const BishopModel = ({ position, color }: { position: [number, number, nu
         if (child.isMesh && child.material) {
           child.material = child.material.clone();
           child.material.color = new THREE.Color(color);
+          child.castShadow = true;
+          child.receiveShadow = true;
         }
       });
     }, [cloned, color]);
@@ -56,6 +60,8 @@ export const KnightModel = ({ position, color }: { position: [number, number, nu
       if (child.isMesh && child.material) {
         child.material = child.material.clone();
         child.material.color = new THREE.Color(color);
+        child.castShadow = true;
+        child.receiveShadow = true;
       }
     });
   }, [cloned, color]);
@@ -70,6 +76,8 @@ export const RookModel = ({ position, color }: { position: [number, number, numb
       if (child.isMesh && child.material) {
         child.material = child.material.clone();
         child.material.color = new THREE.Color(color);
+        child.castShadow = true;
+        child.receiveShadow = true;
       }
     });
   }, [cloned, color]);
@@ -84,6 +92,8 @@ export const PawnModel = ({ position, color }: { position: [number, number, numb
       if (child.isMesh && child.material) {
         child.material = child.material.clone();
         child.material.color = new THREE.Color(color);
+        child.castShadow = true;
+        child.receiveShadow = true;
       }
     });
   }, [cloned, color]);
