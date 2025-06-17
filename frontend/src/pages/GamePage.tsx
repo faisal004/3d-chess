@@ -6,7 +6,7 @@ import { Canvas } from "@react-three/fiber";
 import GameStatusPanel from "@/components/GameStatusPanel";
 import { Chess, type Square } from "chess.js";
 import type { GameStatus, MovePayload, SocketMessage } from "@/types/type";
-
+import styles from "./GamePage.module.css";
 
 
 const GamePage: React.FC = () => {
@@ -14,6 +14,8 @@ const GamePage: React.FC = () => {
   const [gameStatus, setGameStatus] = useState<GameStatus>("not-started");
   const [playerColor, setPlayerColor] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+
+  const [bannerMessage, setBannerMessage] = useState<string | null>(null);
 
   const gameRef = useRef(new Chess());
   const [lastFen, setLastFen] = useState(gameRef.current.fen());
@@ -48,6 +50,23 @@ const GamePage: React.FC = () => {
       console.error("Invalid socket message", e);
     }
   }, []);
+
+  useEffect(() => {
+    if (gameRef.current.isCheckmate()) {
+      setBannerMessage("Checkmate");
+      
+      return;
+    } else if (gameRef.current.isCheck()) {
+      setBannerMessage("Check");
+      const timeout = setTimeout(() => {
+        setBannerMessage(null);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    } else {
+      setBannerMessage(null);
+    }
+  }, [lastFen, gameStatus]);
+
 
   useEffect(() => {
     if (!socket) return;
@@ -91,17 +110,22 @@ const GamePage: React.FC = () => {
   const turn = gameRef.current.turn(); // 'w' or 'b'
 
   return (
-    <>
+    <div className="relative h-screen">
+      {bannerMessage && (
+        <div className="w-full z-50 h-20 text-2xl font-bold absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-white/10 backdrop-blur-sm border-l-0 border-r-0 border border-white shadow-2xl text-white">
+          {bannerMessage}
+        </div>
+      )}
 
-        <GameStatusPanel
-          isConnected={isConnected}
-          message={message}
-          gameStatus={gameStatus}
-          playerColor={playerColor}
-          handleStartGame={handleStartGame}
-          turn={turn}
-        />
-      
+      <GameStatusPanel
+        isConnected={isConnected}
+        message={message}
+        gameStatus={gameStatus}
+        playerColor={playerColor}
+        handleStartGame={handleStartGame}
+        turn={turn}
+      />
+
       <Canvas
         shadows
         className="bg-linear-to-b from-black to-zinc-700"
@@ -116,7 +140,7 @@ const GamePage: React.FC = () => {
       >
         <ChessBoard board={board} onMove={handleLocalMove} getLegalMoves={getLegalMoves} gameStatus={gameStatus} playerColor={playerColor} />
       </Canvas>
-    </>
+    </div>
   );
 };
 
