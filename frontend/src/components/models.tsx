@@ -9,13 +9,13 @@ export const KingModel = ({ position, color }: { position: [number, number, numb
   useEffect(() => {
     cloned.traverse((child: any) => {
       if (child.isMesh && child.material) {
-        child.material = child.material.clone(); // avoid sharing material
+        child.material = child.material.clone(); 
         child.material.color = new THREE.Color(color);
       }
     });
   }, [cloned, color]);
 
-  return <primitive object={cloned} scale={0.7} position={position} />;
+  return <primitive object={cloned} scale={0.7} position={position} rotation={[0, -Math.PI / 2, 0]}/>;
 };
 
 export const QueenModel = ({ position, color }: { position: [number, number, number], color: string }) => {
@@ -25,7 +25,7 @@ export const QueenModel = ({ position, color }: { position: [number, number, num
   useEffect(() => {
     cloned.traverse((child: any) => {
       if (child.isMesh && child.material) {
-        child.material = child.material.clone(); // avoid sharing material
+        child.material = child.material.clone(); 
         child.material.color = new THREE.Color(color);
         child.castShadow = true;
         child.receiveShadow = true;
@@ -65,7 +65,7 @@ export const KnightModel = ({ position, color }: { position: [number, number, nu
       }
     });
   }, [cloned, color]);
-  return <primitive object={cloned} scale={0.15} position={position} />;
+  return <primitive object={cloned} scale={0.15} position={position} rotation={[0, -Math.PI / 2, 0]} />;
 };
 
 export const RookModel = ({ position, color }: { position: [number, number, number], color: string }) => {
