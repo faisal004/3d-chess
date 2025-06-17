@@ -6,7 +6,6 @@ import { Canvas } from "@react-three/fiber";
 import GameStatusPanel from "@/components/GameStatusPanel";
 import { Chess, type Square } from "chess.js";
 import type { GameStatus, MovePayload, SocketMessage } from "@/types/type";
-import styles from "./GamePage.module.css";
 
 
 const GamePage: React.FC = () => {
@@ -54,7 +53,7 @@ const GamePage: React.FC = () => {
   useEffect(() => {
     if (gameRef.current.isCheckmate()) {
       setBannerMessage("Checkmate");
-      
+
       return;
     } else if (gameRef.current.isCheck()) {
       setBannerMessage("Check");
@@ -107,7 +106,7 @@ const GamePage: React.FC = () => {
     const moves = gameRef.current.moves({ square, verbose: true });
     return moves.map(move => move.to);
   };
-  const turn = gameRef.current.turn(); // 'w' or 'b'
+  const turn = gameRef.current.turn(); 
 
   return (
     <div className="relative h-screen">
