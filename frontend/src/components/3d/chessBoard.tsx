@@ -39,11 +39,11 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
 
     const handleSquareClick = useCallback((row: number, col: number) => {
 
-        if ( gameStatus == "waiting-opponent") {
+        if (gameStatus == "waiting-opponent") {
             alert("Game has not started yet.");
             return;
         }
-       
+
         const clickedSquare = getSquare(row, col);
         const piece = board[row][col];
         if (!selectedSquare) {
@@ -88,46 +88,37 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                             <boxGeometry args={[1, 0.2, 1]} />
                             <meshStandardMaterial color={squareColor} />
                         </mesh>
-                      
+
                         {piece && (
                             <group>
-                                <group position={[col - 3.5, 0.25, row - 3.5]} castShadow>
-                                    {piece.type === 'p' && 
-                                    <Suspense>
-                                        <PawnModel position={[0,0,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                    </Suspense>
-                                    }
-                                    {piece.type === 'r' && 
-                                    <Suspense>
-                                        <RookModel position={[0,0.19,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                    </Suspense>
-                                    }
-                                    {piece.type === 'n' && 
-                                    <Suspense>
-                                        <KnightModel position={[0,0.22,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                    </Suspense>
-                                    }
-                                    {piece.type === 'b' && 
-                                    <Suspense>
-                                        <BishopModel position={[0,0.25,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                    </Suspense>
-                                    }
-                                    {piece.type === 'q' && 
-                                    <Suspense>
-                                        <QueenModel position={[0,0.32,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                    </Suspense>
-                           }
-                                    {piece.type === 'k' && 
-                                    <Suspense>
-                                        <KingModel position={[0,0.9,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                    </Suspense>
-                                 }
-                                    <meshStandardMaterial
-                                        color={piece.color === 'w' ? '#e0e0e0' : '#222'}
-                                        emissive={highlight ? (piece.color === 'w' ? '#444400' : '#220022') : '#000000'}
-                                        emissiveIntensity={highlight ? 0.3 : 0}
-                                    />
-                                </group>
+                                <Suspense fallback={null}>
+
+                                    <group position={[col - 3.5, 0.25, row - 3.5]} castShadow>
+                                        {piece.type === 'p' &&
+                                                <PawnModel position={[0, 0, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                        }
+                                        {piece.type === 'r' &&
+                                                <RookModel position={[0, 0.19, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                        }
+                                        {piece.type === 'n' &&
+                                                <KnightModel position={[0, 0.22, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                        }
+                                        {piece.type === 'b' &&
+                                                <BishopModel position={[0, 0.25, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                        }
+                                        {piece.type === 'q' &&
+                                                <QueenModel position={[0, 0.32, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                        }
+                                        {piece.type === 'k' &&
+                                                <KingModel position={[0, 0.9, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                        }
+                                        <meshStandardMaterial
+                                            color={piece.color === 'w' ? '#e0e0e0' : '#222'}
+                                            emissive={highlight ? (piece.color === 'w' ? '#444400' : '#220022') : '#000000'}
+                                            emissiveIntensity={highlight ? 0.3 : 0}
+                                        />
+                                    </group>
+                                </Suspense>
                                 {highlight && (
                                     <>
 
