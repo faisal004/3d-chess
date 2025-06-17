@@ -65,7 +65,7 @@ export const KnightModel = ({ position, color }: { position: [number, number, nu
       }
     });
   }, [cloned, color]);
-  return <primitive object={cloned} scale={0.25} position={position} />;
+  return <primitive object={cloned} scale={0.15} position={position} />;
 };
 
 export const RookModel = ({ position, color }: { position: [number, number, number], color: string }) => {
@@ -81,7 +81,7 @@ export const RookModel = ({ position, color }: { position: [number, number, numb
       }
     });
   }, [cloned, color]);
-  return <primitive object={cloned} scale={0.25} position={position} />;
+  return <primitive object={cloned} scale={0.15} position={position} />;
 };
 
 export const PawnModel = ({ position, color }: { position: [number, number, number], color: string }) => {
@@ -97,5 +97,5 @@ export const PawnModel = ({ position, color }: { position: [number, number, numb
       }
     });
   }, [cloned, color]);
-  return <primitive object={cloned} scale={0.25} position={position} />;
+  return <primitive object={cloned} scale={0.15} position={position} />;
 };

@@ -99,27 +99,27 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                                     }
                                     {piece.type === 'r' && 
                                     <Suspense>
-                                        <RookModel position={[0,0,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                        <RookModel position={[0,0.19,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
                                     </Suspense>
                                     }
                                     {piece.type === 'n' && 
                                     <Suspense>
-                                        <KnightModel position={[0,0,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                        <KnightModel position={[0,0.22,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
                                     </Suspense>
                                     }
                                     {piece.type === 'b' && 
                                     <Suspense>
-                                        <BishopModel position={[0,0,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                        <BishopModel position={[0,0.25,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
                                     </Suspense>
                                     }
                                     {piece.type === 'q' && 
                                     <Suspense>
-                                        <QueenModel position={[0,0,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                        <QueenModel position={[0,0.32,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
                                     </Suspense>
                            }
                                     {piece.type === 'k' && 
                                     <Suspense>
-                                        <KingModel position={[0,0,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                        <KingModel position={[0,0.9,0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
                                     </Suspense>
                                  }
                                     <meshStandardMaterial
