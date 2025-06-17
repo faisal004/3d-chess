@@ -2,8 +2,9 @@
 import { OrbitControls } from '@react-three/drei';
 import Lights from './lights';
 import type { Square, Piece } from 'chess.js';
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, Suspense } from 'react';
 import type { GameStatus } from '@/types/type';
+import { BishopModel, KingModel, KnightModel, PawnModel, QueenModel, RookModel } from '../models';
 
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
@@ -87,21 +88,46 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                             <boxGeometry args={[1, 0.2, 1]} />
                             <meshStandardMaterial color={squareColor} />
                         </mesh>
+                      
                         {piece && (
                             <group>
-                                <mesh position={[col - 3.5, 0.25, row - 3.5]} castShadow>
-                                    {piece.type === 'p' && <sphereGeometry args={[0.28, 32, 32]} />}
-                                    {piece.type === 'r' && <cylinderGeometry args={[0.22, 0.22, 0.5, 32]} />}
-                                    {piece.type === 'n' && <torusGeometry args={[0.18, 0.09, 16, 32]} />}
-                                    {piece.type === 'b' && <coneGeometry args={[0.22, 0.45, 32]} />}
-                                    {piece.type === 'q' && <boxGeometry args={[0.32, 0.32, 0.32]} />}
-                                    {piece.type === 'k' && <sphereGeometry args={[0.36, 32, 32]} />}
+                                <group position={[col - 3.5, 0.25, row - 3.5]} castShadow>
+                                    {piece.type === 'p' && 
+                                    <Suspense>
+                                        <PawnModel position={[0,0,0]} />
+                                    </Suspense>
+                                    }
+                                    {piece.type === 'r' && 
+                                    <Suspense>
+                                        <RookModel position={[0,0,0]} />
+                                    </Suspense>
+                                    }
+                                    {piece.type === 'n' && 
+                                    <Suspense>
+                                        <KnightModel position={[0,0,0]} />
+                                    </Suspense>
+                                    }
+                                    {piece.type === 'b' && 
+                                    <Suspense>
+                                        <BishopModel position={[0,0,0]} />
+                                    </Suspense>
+                                    }
+                                    {piece.type === 'q' && 
+                                    <Suspense>
+                                        <QueenModel position={[0,0,0]} />
+                                    </Suspense>
+                           }
+                                    {piece.type === 'k' && 
+                                    <Suspense>
+                                        <KingModel position={[0,0,0]} />
+                                    </Suspense>
+                                 }
                                     <meshStandardMaterial
                                         color={piece.color === 'w' ? '#e0e0e0' : '#222'}
                                         emissive={highlight ? (piece.color === 'w' ? '#444400' : '#220022') : '#000000'}
                                         emissiveIntensity={highlight ? 0.3 : 0}
                                     />
-                                </mesh>
+                                </group>
                                 {highlight && (
                                     <>
 
