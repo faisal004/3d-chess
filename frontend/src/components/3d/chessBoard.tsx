@@ -5,7 +5,8 @@ import type { Square, Piece } from 'chess.js';
 import React, { useState, useMemo, useCallback, Suspense } from 'react';
 import type { GameStatus } from '@/types/type';
 import { BishopModel, KingModel, KnightModel, PawnModel, QueenModel, RookModel } from '../models';
-
+import { useSpring } from '@react-spring/core'
+import { a } from '@react-spring/three'
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
 type ChessBoardProps = {
@@ -18,6 +19,28 @@ type ChessBoardProps = {
 
 const getSquare = (row: number, col: number): Square => {
     return (FILES[col] + (8 - row)) as Square;
+};
+
+const PieceWrapper = ({ piece, children }: { piece: Piece, children: React.ReactNode }) => {
+    const [active, setActive] = useState(0);
+  
+    const { spring } = useSpring({
+      spring: active,
+      config: { mass: 5, tension: 400, friction: 50, precision: 0.0001 }
+    })
+  
+    // interpolate values from commong spring
+    const scale = spring.to([0, 1], [1, 5]);
+    const rotation = spring.to([0, 1], [0, Math.PI]);
+    const color = spring.to([0, 1], ['#6246ea', '#e45858']);
+  
+    return (
+        <a.group position-y={scale}>
+            <a.mesh rotation-y={rotation} scale-x={scale} scale-z={scale} onClick={() => setActive(Number(!active))}>
+                {children}
+            </a.mesh>
+        </a.group>
+    );
 };
 
 const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, gameStatus, playerColor }) => {
@@ -67,6 +90,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
         setSelectedSquare(null);
     }, [selectedSquare, board, onMove, gameStatus]);
 
+
+  
     const boardElements = useMemo(() => {
         return board.map((rowArr, row) =>
             rowArr.map((piece, col) => {
@@ -95,10 +120,14 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
 
                                     <group position={[col - 3.5, 0.25, row - 3.5]} castShadow>
                                         {piece.type === 'p' &&
+                                            <PieceWrapper piece={piece}>
                                                 <PawnModel position={[0, 0.03, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                            </PieceWrapper>
                                         }
                                         {piece.type === 'r' &&
+                                            <PieceWrapper piece={piece}>
                                                 <RookModel position={[0, 0.19, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                            </PieceWrapper>
                                         }
                                         {piece.type === 'n' &&
                                                 <KnightModel position={[0, 0.22, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
