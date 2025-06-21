@@ -1,14 +1,12 @@
 /// <reference types="@react-three/fiber" />
 import { OrbitControls } from '@react-three/drei';
 import Lights from './lights';
-import type { Square, Piece } from 'chess.js';
+import type { Square } from 'chess.js';
 import React, { useState, useMemo, useCallback, Suspense } from 'react';
-import type { GameStatus } from '@/types/type';
+import type { AnimatedPieceProps, ChessBoardProps} from '@/types/type';
 import { BishopModel, KingModel, KnightModel, PawnModel, QueenModel, RookModel } from '../models';
 import { useSpring } from '@react-spring/core'
 import { a } from '@react-spring/three'
-import { Vector3 } from 'three';
-import type { ChessMove } from '@/pages/GamePage';
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const squareToPosition = (square: Square): [number, number, number] => {
     const file = square[0];
@@ -17,32 +15,12 @@ const squareToPosition = (square: Square): [number, number, number] => {
     const row = 8 - parseInt(rank);
     return [col - 3.5, 0.25, row - 3.5];
 };
-
-
-
-type ChessBoardProps = {
-    board: (Piece | null)[][];
-    onMove: (move: { from: Square; to: Square }) => void;
-    getLegalMoves: (square: Square) => Square[];
-    gameStatus: GameStatus;
-    playerColor: string | null;
-    lastMove: ChessMove | null;
-};
-
 const getSquare = (row: number, col: number): Square => {
     return (FILES[col] + (8 - row)) as Square;
 };
-
-interface AnimatedPieceProps {
-    from: Square;
-    to: Square;
-    children: React.ReactNode;
-}
-
 const AnimatedPiece = ({ from, to, children }: AnimatedPieceProps) => {
     const fromPos = useMemo(() => squareToPosition(from), [from]);
     const toPos = useMemo(() => squareToPosition(to), [to]);
-    console.log(from, fromPos, to, toPos)
     const { position } = useSpring({
         from: { position: fromPos },
         to: { position: toPos },
@@ -129,7 +107,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                                         from={lastMove?.from ?? getSquare(row, col)}
                                         to={getSquare(row, col)}
                                     >
-                                        <group  castShadow>
+                                        <group castShadow>
                                             {piece.type === 'p' && (
 
                                                 <PawnModel position={[0, 0.03, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />

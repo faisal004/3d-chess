@@ -5,12 +5,9 @@ import ChessBoard from "@/components/3d/chessBoard";
 import { Canvas } from "@react-three/fiber";
 import GameStatusPanel from "@/components/GameStatusPanel";
 import { Chess, type Square } from "chess.js";
-import type { GameStatus, SocketMessage } from "@/types/type";
+import type { ChessMove, GameStatus, SocketMessage } from "@/types/type";
 
-export type ChessMove = {
-  from: Square;
-  to: Square;
-};
+
 
 
 const GamePage: React.FC = () => {
