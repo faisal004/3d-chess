@@ -42,7 +42,7 @@ interface AnimatedPieceProps {
 const AnimatedPiece = ({ from, to, children }: AnimatedPieceProps) => {
     const fromPos = useMemo(() => squareToPosition(from), [from]);
     const toPos = useMemo(() => squareToPosition(to), [to]);
-console.log(from,fromPos,to,toPos)
+    console.log(from, fromPos, to, toPos)
     const { position } = useSpring({
         from: { position: fromPos },
         to: { position: toPos },
@@ -125,45 +125,42 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                         {piece && (
                             <group>
                                 <Suspense fallback={null}>
+                                    <AnimatedPiece
+                                        from={lastMove?.from ?? getSquare(row, col)}
+                                        to={getSquare(row, col)}
+                                    >
+                                        <group position={[col - 3.5, 0.25, row - 3.5]} castShadow>
+                                            {piece.type === 'p' && (
 
-                                    <group position={[col - 3.5, 0.25, row - 3.5]} castShadow>
-                                        {piece.type === 'p' && (
-                                            <AnimatedPiece
-                                                from={lastMove?.from ?? getSquare(row, col)}
-                                                to={getSquare(row, col)}
-                                            >
                                                 <PawnModel position={[0, 0.03, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                            </AnimatedPiece>
-                                        )}
-                                        {piece.type === 'r' && (
 
-                                            <RookModel position={[0, 0.19, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                        )}
-                                        {piece.type === 'n' && (
-                                            <KnightModel position={[0, 0.22, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                        )}
-                                        {piece.type === 'b' && (
+                                            )}
+                                            {piece.type === 'r' && (
 
-                                            <BishopModel position={[0, 0.25, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                        )}
-                                        {piece.type === 'q' && (
-                                            <AnimatedPiece
-                                                from={lastMove?.from ?? getSquare(row, col)}
-                                                to={getSquare(row, col)}
-                                            >
+                                                <RookModel position={[0, 0.19, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                            )}
+                                            {piece.type === 'n' && (
+                                                <KnightModel position={[0, 0.22, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                            )}
+                                            {piece.type === 'b' && (
+
+                                                <BishopModel position={[0, 0.25, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                            )}
+                                            {piece.type === 'q' && (
+
                                                 <QueenModel position={[0, 0.32, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                            </AnimatedPiece>
-                                        )}
-                                        {piece.type === 'k' && (
+                                            )}
+                                            {piece.type === 'k' && (
 
-                                            <KingModel position={[0, 0.9, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                        )}
-                                        <meshStandardMaterial
-                                            color={piece.color === 'w' ? '#e0e0e0' : '#222'}
-                                            emissive={highlight ? (piece.color === 'w' ? '#444400' : '#220022') : '#000000'}
-                                            emissiveIntensity={highlight ? 0.3 : 0}
-                                        />
-                                    </group>
+                                                <KingModel position={[0, 0.9, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                            )}
+                                            <meshStandardMaterial
+                                                color={piece.color === 'w' ? '#e0e0e0' : '#222'}
+                                                emissive={highlight ? (piece.color === 'w' ? '#444400' : '#220022') : '#000000'}
+                                                emissiveIntensity={highlight ? 0.3 : 0}
+                                            />
+                                        </group>
+                                    </AnimatedPiece>
                                 </Suspense>
                                 {highlight && (
                                     <>
