@@ -1,7 +1,7 @@
 /// <reference types="@react-three/fiber" />
 import { OrbitControls } from '@react-three/drei';
 import Lights from './lights';
-import type { Piece, PieceSymbol, Square } from 'chess.js';
+import type { Piece, Square } from 'chess.js';
 import React, { useState, useMemo, useCallback, Suspense } from 'react';
 import type { AnimatedPieceProps, ChessBoardProps } from '@/types/type';
 import { BishopModel, KingModel, KnightModel, PawnModel, QueenModel, RookModel } from '../models';
@@ -18,34 +18,16 @@ const squareToPosition = (square: Square): [number, number, number] => {
 const getSquare = (row: number, col: number): Square => {
     return (FILES[col] + (8 - row)) as Square;
 };
-const AnimatedPiece = ({ from, to, children, captured }: AnimatedPieceProps) => {
+const AnimatedPiece = ({ from, to, children ,captured}: AnimatedPieceProps) => {
     const fromPos = useMemo(() => squareToPosition(from), [from]);
     const toPos = useMemo(() => squareToPosition(to), [to]);
-
-    const { position, opacity } = useSpring({
-        from: {
-            position: fromPos,
-            opacity: 1
-        },
-        to: {
-            position: toPos,
-            opacity: captured ? 0 : 1
-        },
-        config: {
-            mass: 1,
-            tension: 500,
-            friction: 50,
-            clamp: true
-        },
+    const { position } = useSpring({
+        from: { position: fromPos },
+        to: { position: toPos },
+        config: { mass: 200, tension: 900, friction: 200,clamp:true },
     });
 
-    return (
-        <a.group position={position as any}>
-            <a.group scale={opacity.to(o => [o, o, o])}>
-                {children}
-            </a.group>
-        </a.group>
-    );
+    return <a.group position={position as any}>{children}</a.group>;
 };
 const PieceComponent = ({ piece, highlight }: { piece: Piece, highlight: boolean }) => (
     <group castShadow>
@@ -136,51 +118,35 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                         {piece && (
                             <group>
                                 <Suspense fallback={null}>
-                                    {lastMove?.to === getSquare(row, col) && (
+                                    {lastMove?.to === getSquare(row, col) ? (
                                         <AnimatedPiece
                                             from={lastMove.from}
                                             to={lastMove.to}
                                             captured={lastMove.captured}
                                         >
-                                            <PieceComponent
-                                                piece={piece}
-                                                highlight={highlight}
-                                            />
+                                            <PieceComponent piece={piece} highlight={highlight} />
                                         </AnimatedPiece>
-                                    )}
-                                    {lastMove?.captured && lastMove.to === getSquare(row, col) && (
-                                        <AnimatedPiece
-                                            from={lastMove.to}
-                                            to={lastMove.to}
-                                            captured={true}
-                                        >
-                                            <PieceComponent
-                                                piece={{
-                                                    type: lastMove.captured as PieceSymbol,
-                                                    color: piece.color === 'w' ? 'b' : 'w'
-                                                }}
-                                                highlight={false}
-                                            />
-                                        </AnimatedPiece>
-                                    )}
-                                    {!lastMove || lastMove.to !== getSquare(row, col) ? (
-                                        // Static piece
+                                    ) : (
                                         <group position={squareToPosition(getSquare(row, col))}>
                                             <PieceComponent piece={piece} highlight={highlight} />
                                         </group>
-                                    ) : null}
+                                    )}
                                 </Suspense>
                                 {highlight && (
-                                    <pointLight
-                                        position={[col - 3.5, 0.5, row - 3.5]}
-                                        color={piece.color === 'w' ? '#ffffaa' : '#ffaaff'}
-                                        intensity={8}
-                                        distance={5}
-                                        decay={1.5}
-                                    />
+                                    <>
+
+                                        <pointLight
+                                            position={[col - 3.5, 0.5, row - 3.5]}
+                                            color={piece.color === 'w' ? '#ffffaa' : '#ffaaff'}
+                                            intensity={8}
+                                            distance={5}
+                                            decay={1.5}
+                                        />
+                                    </>
                                 )}
                             </group>
                         )}
+                        
                     </group>
                 );
             })
