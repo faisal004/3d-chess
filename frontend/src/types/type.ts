@@ -12,6 +12,7 @@ export type SocketMessage = {
 export interface AnimatedPieceProps {
     from: Square;
     to: Square;
+    captured?: string | boolean;
     children: React.ReactNode;
 }
 
@@ -27,4 +28,5 @@ export type ChessBoardProps = {
 export type ChessMove = {
   from: Square;
   to: Square;
+  captured?: string;
 };

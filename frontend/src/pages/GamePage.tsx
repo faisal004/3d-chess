@@ -104,22 +104,34 @@ const GamePage: React.FC = () => {
   };
 
   const handleLocalMove = (move: { from: string; to: string }) => {
+    const targetSquare = gameRef.current.get(move.to as Square);
+    const captured = targetSquare ? targetSquare.type : undefined;
+    
     const moveResult = gameRef.current.move({
-      from: move.from as Square,
-      to: move.to as Square,
-      promotion: 'q' // Default promotion to queen
-    });
-    if (moveResult) {
-      setLastMove({
         from: move.from as Square,
-        to: move.to as Square
-      });
-      setLastFen(gameRef.current.fen());
-      if (socket) {
-        socket.send(JSON.stringify({ type: MOVE, payload: move }));
-      }
+        to: move.to as Square,
+        promotion: 'q'
+    });
+    
+    if (moveResult) {
+        setLastMove({ 
+            from: move.from as Square, 
+            to: move.to as Square,
+            captured: captured
+        });
+        setLastFen(gameRef.current.fen());
+        if (socket) {
+            socket.send(JSON.stringify({ 
+                type: MOVE, 
+                payload: { 
+                    from: move.from, 
+                    to: move.to,
+                    captured: captured 
+                } 
+            }));
+        }
     }
-  };
+};
   const getLegalMoves = (square: Square): Square[] => {
     const moves = gameRef.current.moves({ square, verbose: true });
     return moves.map(move => move.to);
@@ -146,7 +158,7 @@ const GamePage: React.FC = () => {
       <Canvas
         shadows
         className="bg-linear-to-b from-black to-zinc-700"
-        camera={{ position: [10, 10, 10], fov: 50 }}
+        camera={{ position: [10, 10, 10], fov: 20 }}
         style={{
           position: "fixed",
           top: 0,
