@@ -131,8 +131,21 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                                         </group>
                                     )}
                                 </Suspense>
+                                {highlight && (
+                                    <>
+
+                                        <pointLight
+                                            position={[col - 3.5, 0.5, row - 3.5]}
+                                            color={piece.color === 'w' ? '#ffffaa' : '#ffaaff'}
+                                            intensity={8}
+                                            distance={5}
+                                            decay={1.5}
+                                        />
+                                    </>
+                                )}
                             </group>
                         )}
+                        
                     </group>
                 );
             })
