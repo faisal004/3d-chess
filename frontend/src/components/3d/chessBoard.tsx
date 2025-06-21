@@ -1,9 +1,9 @@
 /// <reference types="@react-three/fiber" />
 import { OrbitControls } from '@react-three/drei';
 import Lights from './lights';
-import type { Square } from 'chess.js';
+import type { Piece, Square } from 'chess.js';
 import React, { useState, useMemo, useCallback, Suspense } from 'react';
-import type { AnimatedPieceProps, ChessBoardProps} from '@/types/type';
+import type { AnimatedPieceProps, ChessBoardProps } from '@/types/type';
 import { BishopModel, KingModel, KnightModel, PawnModel, QueenModel, RookModel } from '../models';
 import { useSpring } from '@react-spring/core'
 import { a } from '@react-spring/three'
@@ -29,6 +29,21 @@ const AnimatedPiece = ({ from, to, children }: AnimatedPieceProps) => {
 
     return <a.group position={position as any}>{children}</a.group>;
 };
+const PieceComponent = ({ piece, highlight }: { piece: Piece, highlight: boolean }) => (
+    <group castShadow>
+        {piece.type === 'p' && <PawnModel position={[0, 0.03, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />}
+        {piece.type === 'r' && <RookModel position={[0, 0.19, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />}
+        {piece.type === 'n' && <KnightModel position={[0, 0.22, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />}
+        {piece.type === 'b' && <BishopModel position={[0, 0.25, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />}
+        {piece.type === 'q' && <QueenModel position={[0, 0.32, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />}
+        {piece.type === 'k' && <KingModel position={[0, 0.9, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />}
+        <meshStandardMaterial
+            color={piece.color === 'w' ? '#e0e0e0' : '#222'}
+            emissive={highlight ? (piece.color === 'w' ? '#444400' : '#220022') : '#000000'}
+            emissiveIntensity={highlight ? 0.3 : 0}
+        />
+    </group>
+);
 const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, gameStatus, playerColor, lastMove }) => {
     const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
 
@@ -103,55 +118,19 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                         {piece && (
                             <group>
                                 <Suspense fallback={null}>
-                                    <AnimatedPiece
-                                        from={lastMove?.from ?? getSquare(row, col)}
-                                        to={getSquare(row, col)}
-                                    >
-                                        <group castShadow>
-                                            {piece.type === 'p' && (
-
-                                                <PawnModel position={[0, 0.03, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-
-                                            )}
-                                            {piece.type === 'r' && (
-
-                                                <RookModel position={[0, 0.19, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                            )}
-                                            {piece.type === 'n' && (
-                                                <KnightModel position={[0, 0.22, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                            )}
-                                            {piece.type === 'b' && (
-
-                                                <BishopModel position={[0, 0.25, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                            )}
-                                            {piece.type === 'q' && (
-
-                                                <QueenModel position={[0, 0.32, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                            )}
-                                            {piece.type === 'k' && (
-
-                                                <KingModel position={[0, 0.9, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                            )}
-                                            <meshStandardMaterial
-                                                color={piece.color === 'w' ? '#e0e0e0' : '#222'}
-                                                emissive={highlight ? (piece.color === 'w' ? '#444400' : '#220022') : '#000000'}
-                                                emissiveIntensity={highlight ? 0.3 : 0}
-                                            />
+                                    {lastMove?.to === getSquare(row, col) ? (
+                                        <AnimatedPiece
+                                            from={lastMove.from}
+                                            to={lastMove.to}
+                                        >
+                                            <PieceComponent piece={piece} highlight={highlight} />
+                                        </AnimatedPiece>
+                                    ) : (
+                                        <group position={squareToPosition(getSquare(row, col))}>
+                                            <PieceComponent piece={piece} highlight={highlight} />
                                         </group>
-                                    </AnimatedPiece>
+                                    )}
                                 </Suspense>
-                                {highlight && (
-                                    <>
-
-                                        <pointLight
-                                            position={[col - 3.5, 0.5, row - 3.5]}
-                                            color={piece.color === 'w' ? '#ffffaa' : '#ffaaff'}
-                                            intensity={8}
-                                            distance={5}
-                                            decay={1.5}
-                                        />
-                                    </>
-                                )}
                             </group>
                         )}
                     </group>
