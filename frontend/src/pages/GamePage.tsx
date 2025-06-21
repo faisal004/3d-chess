@@ -5,7 +5,12 @@ import ChessBoard from "@/components/3d/chessBoard";
 import { Canvas } from "@react-three/fiber";
 import GameStatusPanel from "@/components/GameStatusPanel";
 import { Chess, type Square } from "chess.js";
-import type { GameStatus, MovePayload, SocketMessage } from "@/types/type";
+import type { GameStatus, SocketMessage } from "@/types/type";
+
+export type ChessMove = {
+  from: Square;
+  to: Square;
+};
 
 
 const GamePage: React.FC = () => {
@@ -18,6 +23,7 @@ const GamePage: React.FC = () => {
 
   const gameRef = useRef(new Chess());
   const [lastFen, setLastFen] = useState(gameRef.current.fen());
+  const [lastMove, setLastMove] = useState<ChessMove | null>(null);
 
   const board = useMemo(() => gameRef.current.board(), [lastFen]);
 
@@ -27,8 +33,15 @@ const GamePage: React.FC = () => {
       switch (data.type) {
         case MOVE:
           if (data.payload?.from && data.payload?.to) {
-            const moveResult = gameRef.current.move({ from: data.payload.from, to: data.payload.to });
+            const moveResult = gameRef.current.move({ 
+              from: data.payload.from as Square, 
+              to: data.payload.to as Square 
+            });
             if (moveResult) {
+              setLastMove({ 
+                from: data.payload.from as Square, 
+                to: data.payload.to as Square 
+              });
               setLastFen(gameRef.current.fen());
             }
           }
@@ -93,9 +106,17 @@ const GamePage: React.FC = () => {
     }
   };
 
-  const handleLocalMove = (move: MovePayload) => {
-    const moveResult = gameRef.current.move(move);
+  const handleLocalMove = (move: { from: string; to: string }) => {
+    const moveResult = gameRef.current.move({
+      from: move.from as Square,
+      to: move.to as Square,
+      promotion: 'q' // Default promotion to queen
+    });
     if (moveResult) {
+      setLastMove({
+        from: move.from as Square,
+        to: move.to as Square
+      });
       setLastFen(gameRef.current.fen());
       if (socket) {
         socket.send(JSON.stringify({ type: MOVE, payload: move }));
@@ -137,7 +158,7 @@ const GamePage: React.FC = () => {
           height: "100%",
         }}
       >
-        <ChessBoard board={board} onMove={handleLocalMove} getLegalMoves={getLegalMoves} gameStatus={gameStatus} playerColor={playerColor} />
+        <ChessBoard board={board} onMove={handleLocalMove} getLegalMoves={getLegalMoves} gameStatus={gameStatus} playerColor={playerColor}  lastMove={lastMove}/>
       </Canvas>
     </div>
   );

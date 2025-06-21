@@ -8,7 +8,17 @@ import { BishopModel, KingModel, KnightModel, PawnModel, QueenModel, RookModel }
 import { useSpring } from '@react-spring/core'
 import { a } from '@react-spring/three'
 import { Vector3 } from 'three';
+import type { ChessMove } from '@/pages/GamePage';
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+const squareToPosition = (square: Square): [number, number, number] => {
+    const file = square[0];
+    const rank = square[1];
+    const col = FILES.indexOf(file);
+    const row = 8 - parseInt(rank);
+    return [col - 3.5, 0.25, row - 3.5];
+};
+
+
 
 type ChessBoardProps = {
     board: (Piece | null)[][];
@@ -16,46 +26,32 @@ type ChessBoardProps = {
     getLegalMoves: (square: Square) => Square[];
     gameStatus: GameStatus;
     playerColor: string | null;
+    lastMove: ChessMove | null;
 };
 
 const getSquare = (row: number, col: number): Square => {
     return (FILES[col] + (8 - row)) as Square;
 };
 
-interface PieceWrapperProps {
-    piece: Piece;
-    from: [number, number, number];  
-    to: [number, number, number];    
+interface AnimatedPieceProps {
+    from: Square;
+    to: Square;
     children: React.ReactNode;
 }
 
-const PieceWrapper = ({ piece, from, to, children }: PieceWrapperProps) => {
-    const [isAnimating, setIsAnimating] = useState(false);
-  
+const AnimatedPiece = ({ from, to, children }: AnimatedPieceProps) => {
+    const fromPos = useMemo(() => squareToPosition(from), [from]);
+    const toPos = useMemo(() => squareToPosition(to), [to]);
+console.log(from,fromPos,to,toPos)
     const { position } = useSpring({
-        position: isAnimating ? to : from,
-        config: { 
-            mass: 1, 
-            tension: 300, 
-            friction: 20,
-            clamp: true
-        },
-        onRest: () => setIsAnimating(false)
+        from: { position: fromPos },
+        to: { position: toPos },
+        config: { mass: 1, tension: 300, friction: 20, clamp: true },
     });
-  
-    return (
-        <a.group 
-            position={position as any}
-            onClick={() => {
-                setIsAnimating(!isAnimating);
-            }}
-        >
-            {children}
-        </a.group>
-    );
-};
 
-const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, gameStatus, playerColor }) => {
+    return <a.group position={position as any}>{children}</a.group>;
+};
+const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, gameStatus, playerColor, lastMove }) => {
     const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
 
     const validMoves = useMemo(() => {
@@ -103,7 +99,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
     }, [selectedSquare, board, onMove, gameStatus]);
 
 
-  
+
     const boardElements = useMemo(() => {
         return board.map((rowArr, row) =>
             rowArr.map((piece, col) => {
@@ -118,7 +114,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                     squareColor = piece ? '#ff6b6b' : '#f7e26b';
                 }
 
-                
+
                 return (
                     <group key={`square-${row}-${col}`} onClick={() => handleSquareClick(row, col)}>
                         <mesh position={squarePos} receiveShadow castShadow>
@@ -130,34 +126,37 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                             <group>
                                 <Suspense fallback={null}>
 
-                                    <group position={[col - 3.5, 0.25, row - 3.5]}  castShadow>
+                                    <group position={[col - 3.5, 0.25, row - 3.5]} castShadow>
                                         {piece.type === 'p' && (
-                                            <PieceWrapper 
-                                                piece={piece}
-                                                from={[0, 0, 0]}
-                                                to={[1, 0, 1]}
+                                            <AnimatedPiece
+                                                from={lastMove?.from ?? getSquare(row, col)}
+                                                to={getSquare(row, col)}
                                             >
                                                 <PawnModel position={[0, 0.03, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                            </PieceWrapper>
+                                            </AnimatedPiece>
                                         )}
                                         {piece.type === 'r' && (
-                                        
-                                                <RookModel position={[0, 0.19, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+
+                                            <RookModel position={[0, 0.19, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
                                         )}
                                         {piece.type === 'n' && (
-                                              <KnightModel position={[0, 0.22, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                            <KnightModel position={[0, 0.22, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
                                         )}
                                         {piece.type === 'b' && (
-                                            
-                                                <BishopModel position={[0, 0.25, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+
+                                            <BishopModel position={[0, 0.25, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
                                         )}
                                         {piece.type === 'q' && (
-                                        
+                                            <AnimatedPiece
+                                                from={lastMove?.from ?? getSquare(row, col)}
+                                                to={getSquare(row, col)}
+                                            >
                                                 <QueenModel position={[0, 0.32, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                            </AnimatedPiece>
                                         )}
                                         {piece.type === 'k' && (
-                                    
-                                                <KingModel position={[0, 0.9, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+
+                                            <KingModel position={[0, 0.9, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
                                         )}
                                         <meshStandardMaterial
                                             color={piece.color === 'w' ? '#e0e0e0' : '#222'}
