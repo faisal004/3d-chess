@@ -7,6 +7,7 @@ import type { GameStatus } from '@/types/type';
 import { BishopModel, KingModel, KnightModel, PawnModel, QueenModel, RookModel } from '../models';
 import { useSpring } from '@react-spring/core'
 import { a } from '@react-spring/three'
+import { Vector3 } from 'three';
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
 type ChessBoardProps = {
@@ -21,24 +22,35 @@ const getSquare = (row: number, col: number): Square => {
     return (FILES[col] + (8 - row)) as Square;
 };
 
-const PieceWrapper = ({ piece, children }: { piece: Piece, children: React.ReactNode }) => {
-    const [active, setActive] = useState(0);
+interface PieceWrapperProps {
+    piece: Piece;
+    from: [number, number, number];  
+    to: [number, number, number];    
+    children: React.ReactNode;
+}
+
+const PieceWrapper = ({ piece, from, to, children }: PieceWrapperProps) => {
+    const [isAnimating, setIsAnimating] = useState(false);
   
-    const { spring } = useSpring({
-      spring: active,
-      config: { mass: 5, tension: 400, friction: 50, precision: 0.0001 }
-    })
-  
-    // interpolate values from commong spring
-    const scale = spring.to([0, 1], [1, 5]);
-    const rotation = spring.to([0, 1], [0, Math.PI]);
-    const color = spring.to([0, 1], ['#6246ea', '#e45858']);
+    const { position } = useSpring({
+        position: isAnimating ? to : from,
+        config: { 
+            mass: 1, 
+            tension: 300, 
+            friction: 20,
+            clamp: true
+        },
+        onRest: () => setIsAnimating(false)
+    });
   
     return (
-        <a.group position-y={scale}>
-            <a.mesh rotation-y={rotation} scale-x={scale} scale-z={scale} onClick={() => setActive(Number(!active))}>
-                {children}
-            </a.mesh>
+        <a.group 
+            position={position as any}
+            onClick={() => {
+                setIsAnimating(!isAnimating);
+            }}
+        >
+            {children}
         </a.group>
     );
 };
@@ -99,7 +111,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                 const squarePos: [number, number, number] = [col - 3.5, 0, row - 3.5];
                 const highlight = isSelected(row, col);
                 const canMoveTo = isValidMove(row, col);
-
                 let squareColor = isWhiteSquare ? '#FFFFF0' : '#5d9948';
                 if (highlight) {
                     squareColor = '#f7e26b';
@@ -107,6 +118,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                     squareColor = piece ? '#ff6b6b' : '#f7e26b';
                 }
 
+                
                 return (
                     <group key={`square-${row}-${col}`} onClick={() => handleSquareClick(row, col)}>
                         <mesh position={squarePos} receiveShadow castShadow>
@@ -118,29 +130,35 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                             <group>
                                 <Suspense fallback={null}>
 
-                                    <group position={[col - 3.5, 0.25, row - 3.5]} castShadow>
-                                        {piece.type === 'p' &&
-                                            <PieceWrapper piece={piece}>
+                                    <group position={[col - 3.5, 0.25, row - 3.5]}  castShadow>
+                                        {piece.type === 'p' && (
+                                            <PieceWrapper 
+                                                piece={piece}
+                                                from={[0, 0, 0]}
+                                                to={[1, 0, 1]}
+                                            >
                                                 <PawnModel position={[0, 0.03, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
                                             </PieceWrapper>
-                                        }
-                                        {piece.type === 'r' &&
-                                            <PieceWrapper piece={piece}>
+                                        )}
+                                        {piece.type === 'r' && (
+                                        
                                                 <RookModel position={[0, 0.19, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                            </PieceWrapper>
-                                        }
-                                        {piece.type === 'n' &&
-                                                <KnightModel position={[0, 0.22, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                        }
-                                        {piece.type === 'b' &&
+                                        )}
+                                        {piece.type === 'n' && (
+                                              <KnightModel position={[0, 0.22, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
+                                        )}
+                                        {piece.type === 'b' && (
+                                            
                                                 <BishopModel position={[0, 0.25, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                        }
-                                        {piece.type === 'q' &&
+                                        )}
+                                        {piece.type === 'q' && (
+                                        
                                                 <QueenModel position={[0, 0.32, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                        }
-                                        {piece.type === 'k' &&
+                                        )}
+                                        {piece.type === 'k' && (
+                                    
                                                 <KingModel position={[0, 0.9, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
-                                        }
+                                        )}
                                         <meshStandardMaterial
                                             color={piece.color === 'w' ? '#e0e0e0' : '#222'}
                                             emissive={highlight ? (piece.color === 'w' ? '#444400' : '#220022') : '#000000'}
