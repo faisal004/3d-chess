@@ -129,7 +129,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ board, onMove, getLegalMoves, g
                                         from={lastMove?.from ?? getSquare(row, col)}
                                         to={getSquare(row, col)}
                                     >
-                                        <group position={[col - 3.5, 0.25, row - 3.5]} castShadow>
+                                        <group  castShadow>
                                             {piece.type === 'p' && (
 
                                                 <PawnModel position={[0, 0.03, 0]} color={piece.color === 'w' ? '#e0e0e0' : '#222'} />
