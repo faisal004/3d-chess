@@ -24,7 +24,7 @@ const AnimatedPiece = ({ from, to, children }: AnimatedPieceProps) => {
     const { position } = useSpring({
         from: { position: fromPos },
         to: { position: toPos },
-        config: { mass: 1, tension: 300, friction: 20, clamp: true },
+        config: { mass: 200, tension: 900, friction: 200,clamp:true },
     });
 
     return <a.group position={position as any}>{children}</a.group>;
