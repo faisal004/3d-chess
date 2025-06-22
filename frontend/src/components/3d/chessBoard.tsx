@@ -18,7 +18,7 @@ const squareToPosition = (square: Square): [number, number, number] => {
 const getSquare = (row: number, col: number): Square => {
     return (FILES[col] + (8 - row)) as Square;
 };
-const AnimatedPiece = ({ from, to, children ,captured}: AnimatedPieceProps) => {
+const AnimatedPiece = ({ from, to, children}: AnimatedPieceProps) => {
     const fromPos = useMemo(() => squareToPosition(from), [from]);
     const toPos = useMemo(() => squareToPosition(to), [to]);
     const { position } = useSpring({
