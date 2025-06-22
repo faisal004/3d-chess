@@ -5,7 +5,7 @@ import { GAME_OVER, INIT_GAME, MOVE } from "./messages";
 export class Game {
     public player1: WebSocket;
     public player2: WebSocket;
-    public board: Chess;
+    public board: InstanceType<typeof Chess>;
     private startTime: Date;
     private moveCount = 0;
     private gameOver = false;
@@ -38,7 +38,7 @@ export class Game {
             return;
         }
         try {
-            const result = this.board.move(move);
+            const result = this.board.move(move as any);
             if (!result) {
                 socket.send(JSON.stringify({ error: "Illegal move" }));
                 return;
@@ -48,7 +48,7 @@ export class Game {
             socket.send(JSON.stringify({ error: "Move error" }));
             return;
         }
-        if (this.board.isGameOver()) {
+        if (this.board.game_over()) {
             this.gameOver = true;
             const winner = this.board.turn() === "w" ? "black" : "white";
             this.player1.send(JSON.stringify({
