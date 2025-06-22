@@ -4,13 +4,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-  "dev": "tsc -b && node dist/index.js"
+    "dev": "tsc -b && node dist/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/chess.js": "^0.13.7",
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.1",
     "@types/ws": "^8.18.1",
