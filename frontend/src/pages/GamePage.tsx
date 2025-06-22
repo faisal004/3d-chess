@@ -11,7 +11,7 @@ import type { ChessMove, GameStatus, SocketMessage } from "@/types/type";
 
 
 const GamePage: React.FC = () => {
-  const { socket, send, isConnected } = useSocket("ws://localhost:8080");
+  const { socket, send, isConnected } = useSocket("https://threed-chess-hcan.onrender.com");
   const [gameStatus, setGameStatus] = useState<GameStatus>("not-started");
   const [playerColor, setPlayerColor] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -49,7 +49,7 @@ const GamePage: React.FC = () => {
           break;
         case OPPONENT_LEFT:
           setGameStatus("not-started");
-          setMessage("Your opponent has left the game , may be scared of you chess skills 😂😂😂");
+          setMessage("Your opponent has left the game , may be scared of your chess skills 😂😂😂");
           setPlayerColor(null);
           break;
         default:
