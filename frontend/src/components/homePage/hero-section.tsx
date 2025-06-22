@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 const HeroSection = () => {
     const navigate = useNavigate()
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen font-mono bg-linear-to-t from-black to-zinc-700 w-full">
+        <div className="flex flex-col items-center justify-center min-h-screen font-mono bg-linear-to-t from-black to-zinc-700 w-full py-20">
             <h1 className="text-7xl font-bold text-white ">Chess</h1>
 
             <img src="./picture/hero-section.png" alt="hero-image" />
