@@ -38,7 +38,7 @@ export class Game {
             return;
         }
         try {
-            const result = this.board.move(move as any);
+            const result = this.board.move(move);
             if (!result) {
                 socket.send(JSON.stringify({ error: "Illegal move" }));
                 return;
@@ -48,7 +48,7 @@ export class Game {
             socket.send(JSON.stringify({ error: "Move error" }));
             return;
         }
-        if (this.board.game_over()) {
+        if (this.board.isGameOver()) {
             this.gameOver = true;
             const winner = this.board.turn() === "w" ? "black" : "white";
             this.player1.send(JSON.stringify({
